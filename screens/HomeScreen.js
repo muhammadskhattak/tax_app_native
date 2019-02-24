@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import { WebBrowser } from 'expo';
+import UserFormMine from '../components/UserForm';
 
 import { MonoText } from '../components/StyledText';
 
@@ -49,6 +50,7 @@ export default class HomeScreen extends React.Component {
               </Text>
           </View>
         </ScrollView>
+        <UserFormMine/>
       </View>
     );
   }

@@ -4,10 +4,14 @@ import { ImagePicker, Permissions } from 'expo';
 import axios from 'axios';
 import { stringify } from 'qs';
 
+
 export default class ImagePickerExample extends React.Component {
   state = {
     image: null,
-    data: null
+    data: null,
+    totalAmount: null,
+    taxAmount:null,
+    date: null,
   };
 
   render() {
@@ -25,9 +29,35 @@ export default class ImagePickerExample extends React.Component {
             title="Upload Image to Parser"
             onPress={this._uploadImage}
           />
-          <Text>Data: {this.data}</Text>
+          <Button 
+            title="Send to Database"
+            onPress={this._sendToDB}
+          />
+          <Text>Total Amount: {this.state.totalAmount}</Text>
+          <Text>Date of Purchase: {this.state.date}</Text>
       </View>
     );
+  }
+
+
+  _sendToDB = () => {
+    if (!this.state.taxAmount){
+      this.setState({
+        taxAmount: this.state.totalAmount - (this.state.totalAmount / 1.13)
+      });
+    }
+
+    const receipt = {
+      price: this.state.totalAmount,
+      tax: this.state.taxAmount,
+    }
+
+    axios.post("https://spatial-genius-232603.appspot.com/predict/addReceipt", receipt).then((response) =>{
+      console.log("Success");
+    }).catch((response) => {
+      console.log("Failure");
+      console.log(response);
+    });
   }
 
   _uploadImage = async() => {
@@ -58,8 +88,14 @@ export default class ImagePickerExample extends React.Component {
       },
       body: blob_obj
     }).then((response) => {
-      console.log("Success");
-      console.log(response);
+      response.json().then((data) => {
+        console.log("Success");
+        console.log(Object.keys(data));
+        this.setState({
+          totalAmount: data["totalAmount"]["data"],
+          date: data["date"]["data"],
+        })
+      });
     }).catch((error) => {
       console.log("Failure!");
       console.log(error);

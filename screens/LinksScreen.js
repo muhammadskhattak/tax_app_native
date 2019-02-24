@@ -7,7 +7,12 @@ import ImagePicker from '../components/ImagePickerTest';
 export default class LinksScreen extends React.Component {
   static navigationOptions = {
     title: 'Camera',
+    username: null,
   };
+
+  formSubmissionHandler(new_username){
+    this.setState({username: new_username});
+  }
 
   render() {
     return (
